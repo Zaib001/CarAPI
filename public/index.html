@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Fetch - Racing Data</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding: 20px;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      button {
+        margin: 10px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-right: 10px;
+      }
+
+      #output {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        white-space: pre-wrap;
+      }
+
+      .button-container {
+        margin-bottom: 20px;
+      }
+    </style>
+
+    <script>
+      async function fetchData(endpoint, lang = "en", driverId = "") {
+        try {
+          const url = driverId
+            ? `/api/${lang}/${endpoint}?driverId=${driverId}`
+            : `/api/${lang}/${endpoint}`;
+
+          const response = await fetch(url);
+
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+          }
+
+          const data = await response.json();
+          displayData(data);
+        } catch (error) {
+          displayData({ error: `Failed to fetch data: ${error.message}` });
+        }
+      }
+
+      function displayData(data) {
+        document.getElementById("output").textContent = JSON.stringify(
+          data,
+          null,
+          2
+        );
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Racing Data Fetch</h1>
+
+    <div>
+      <label for="driverId">Driver ID (optional):</label>
+      <input
+        type="text"
+        id="driverId"
+        placeholder="Enter Driver ID (optional)"
+      />
+    </div>
+
+    <div class="button-container">
+      <button onclick="fetchData('GetDriverProfile')">
+        Get Driver Profile (Default)
+      </button>
+      <button
+        onclick="fetchData('GetDriverProfile', 'en', document.getElementById('driverId').value)"
+      >
+        Get Driver Profile (By ID)
+      </button>
+      <button onclick="fetchData('GetTDProfile')">Get TD Profile</button>
+      <button onclick="fetchData('GetCar')">Get Car Data</button>
+      <button onclick="fetchData('GetSponsorNegotiations')">
+        Get Sponsor Negotiations
+      </button>
+      <button onclick="fetchData('GetStaffFacilities')">
+        Get Staff & Facilities
+      </button>
+      <button onclick="fetchData('GetRaceAnalysis')">Get Race Analysis</button>
+      <button onclick="fetchData('GetAvailDrivers')">Get Available Drivers</button>
+      <button onclick="fetchData('GetAvailTDs')">Get Available TDs</button>
+    </div>
+
+    <h3>Response Output:</h3>
+    <pre id="output"></pre>
+  </body>
+</html>
